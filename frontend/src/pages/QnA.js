@@ -1,38 +1,69 @@
 import React, { useState } from "react";
 
-export default function QnA() {
-  const [inputText, setInputText] = useState("");
-  const [output, setOutput] = useState("");
+function QnA() {
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleAsk = async () => {
+    if (!question.trim()) {
+      alert("Please enter a legal question.");
+      return;
+    }
+
+    setLoading(true);
+    setAnswer("");
+
     try {
-      const response = await fetch("http://127.0.0.1:5000/simplify", {
+      const response = await fetch("http://localhost:5000/api/qa", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: inputText }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question }), // ✅ send question correctly
       });
 
+      if (!response.ok) {
+        throw new Error("Server error: " + response.status);
+      }
+
       const data = await response.json();
-      setOutput(data.simplified); // backend returns { simplified: "..." }
+
+      if (data.answer) {
+        setAnswer(data.answer);
+      } else {
+        setAnswer("⚠ Error: " + (data.error || "Unknown error"));
+      }
     } catch (error) {
-      console.error("Error:", error);
+      setAnswer("⚠ Error: " + error.message);
     }
+
+    setLoading(false);
   };
 
   return (
-    <div>
-      <h1>Q&A Page</h1>
-      <textarea
-        rows="4"
-        cols="50"
-        placeholder="Enter your legal text..."
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
+    <div style={{ padding: "20px" }}>
+      <h2>Legal Q&A</h2>
+      <input
+        type="text"
+        placeholder="Ask a legal question..."
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        style={{ width: "400px", padding: "8px" }}
       />
-      <br />
-      <button onClick={handleSubmit}>Simplify</button>
-      <h2>Output:</h2>
-      <p>{output}</p>
+      <br /><br />
+      <button onClick={handleAsk} disabled={loading}>
+        {loading ? "Thinking..." : "Ask"}
+      </button>
+
+      {answer && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Answer:</h3>
+          <p>{answer}</p>
+        </div>
+      )}
     </div>
   );
 }
+
+export default QnA;

@@ -15,7 +15,7 @@ function Summarization() {
     setSummary("");
 
     try {
-      const response = await fetch("/summarize", {
+      const response = await fetch("http://localhost:5000/api/summarize", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -23,15 +23,14 @@ function Summarization() {
         body: JSON.stringify({ text: inputText }),
       });
 
-      const data = await response.json();
-
-      if (data.summary) {
-        setSummary(data.summary);
-      } else {
-        setSummary("⚠️ Error: " + (data.error || "Unknown error"));
+      if (!response.ok) {
+        throw new Error("Server error: " + response.status);
       }
+
+      const data = await response.json();
+      setSummary(data.summary || "⚠ Error: No summary returned");
     } catch (error) {
-      setSummary("⚠️ Error: " + error.message);
+      setSummary("⚠ Error: " + error.message);
     }
 
     setLoading(false);
