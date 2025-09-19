@@ -40,7 +40,6 @@ def summarize():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 # ---------- Clause Explanation ----------
 @app.route("/api/clause-explain", methods=["POST"])
 def clause_explain():
@@ -70,7 +69,6 @@ def clause_explain():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 # ---------- Q&A ----------
 @app.route("/api/qa", methods=["POST"])
 def qa():
@@ -92,6 +90,5 @@ def qa():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-if __name__ == "_main_":
+if __name__ == "__main__":  # ✅ fixed here
     app.run(debug=True, port=5000)

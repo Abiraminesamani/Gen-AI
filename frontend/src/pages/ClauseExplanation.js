@@ -15,12 +15,12 @@ function ClauseExplanation() {
     setExplanation("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/explain", {
+      const response = await fetch("http://localhost:5000/api/clause-explain", { // ✅ fixed route
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ clause: inputText }), // ✅ matches backend
+        body: JSON.stringify({ clause: inputText }),
       });
 
       if (!response.ok) {
