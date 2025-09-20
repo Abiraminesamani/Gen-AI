@@ -1,30 +1,25 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/Home";                // ✅ new import
-import IntroUpload from "./pages/IntroUpload";
-import Summarization from "./pages/Summarization";
-import ClauseExplanation from "./pages/ClauseExplanation";
-import QnA from "./pages/QnA";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import IntroUpload from "./pages/IntroUpload";   // ✅ correct name
+import Summarization from "./pages/Summarization"; // ✅ correct name
+import ClauseExplanation from "./pages/ClauseExplanation"; // ✅ correct name
+import QnA from "./pages/QnA";  // ✅ this matches your file
+
 
 function App() {
   return (
     <Router>
-      <nav>
-        <Link to="/">Home</Link> |{" "}
-        <Link to="/upload">Upload</Link> |{" "}   {/* ✅ new route */}
-        <Link to="/summary">Summarization</Link> |{" "}
-        <Link to="/clauses">Clause Explanation</Link> |{" "}
-        <Link to="/qna">Q&A</Link>
-      </nav>
-
       <Routes>
-        <Route path="/" element={<Home />} />              {/* ✅ new homepage */}
-        <Route path="/upload" element={<IntroUpload />} /> {/* ✅ moved here */}
-        <Route path="/summary" element={<Summarization />} />
-        <Route path="/clauses" element={<ClauseExplanation />} />
-        <Route path="/qna" element={<QnA />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/upload" element={<IntroUpload />} />
+        <Route path="/summarize" element={<Summarization />} />
+        <Route path="/clause" element={<ClauseExplanation />} />
+        <Route path="/qa" element={<QnA />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

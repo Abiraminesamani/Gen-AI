@@ -1,64 +1,289 @@
-.summarization-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+.summarize-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  color: #2d3748;
+  line-height: 1.6;
+  padding: 20px;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.summarization-container h2 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
+.summarize-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px;
 }
 
-textarea {
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4c6ef5;
+  margin-bottom: 10px;
+  display: inline-block;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.summarize-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #4c6ef5 0%, #3b5bdb 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.summarize-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .summarize-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-card, .summary-card, .history-card, .tips-card {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-card:hover, .summary-card:hover, .history-card:hover, .tips-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.input-header h2 {
+  font-size: 1.5rem;
+  color: #4c6ef5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-header h2 i {
+  background: #4c6ef5;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.char-count {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.text-input {
   width: 100%;
-  padding: 1rem;
+  min-height: 250px;
+  padding: 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-family: inherit;
   font-size: 1rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
   resize: vertical;
-  margin-bottom: 1rem;
+  transition: border-color 0.3s;
 }
 
-textarea:focus {
-  border-color: #3498db;
+.text-input:focus {
   outline: none;
-  box-shadow: 0 0 5px rgba(52,152,219,0.3);
+  border-color: #4c6ef5;
+  box-shadow: 0 0 0 3px rgba(76, 110, 245, 0.1);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 button {
-  background: #3498db;
-  color: white;
+  padding: 14px 28px;
   border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-button:hover:not(:disabled) {
-  background: #2980b9;
+.btn-primary {
+  background: linear-gradient(135deg, #4c6ef5 0%, #3b5bdb 100%);
+  color: white;
 }
 
-button:disabled {
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 110, 245, 0.4);
+}
+
+.btn-primary:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
 }
 
-.error-message {
-  background: #fadbd8;
-  color: #e74c3c;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
+.btn-primary.loading {
+  background: #2980b9;
 }
 
-.summary-box {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 8px;
-  background: #ecf0f1;
+.btn-secondary {
+  background: #f8f9fa;
+  color: #64748b;
 }
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e9ecef;
+}
+
+.btn-secondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.error-message {
+  background-color: #ffecec;
+  color: #e74c3c;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #4c6ef5 0%, #3b5bdb 100%);
+  color: white;
+}
+
+.summary-card h2 {
+  color: white;
+}
+
+.summary-card h2 i {
+  background: white;
+  color: #4c6ef5;
+}
+
+.summary-content {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 15px;
+  min-height: 150px;
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.summary-content p {
+  margin-bottom: 30px;
+}
+
+.copy-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.history-card ul {
+  list-style: none;
+  margin-top: 15px;
+}
+
+.history-item {
+  padding: 15px;
+  border-left: 3px solid #4c6ef5;
+  background: #f8f9fa;
+  margin-bottom: 10px;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.history-text {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.history-date {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.no-history {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+.tips-card ul {
+  list-style: none;
+  margin-top: 15px;
+}
+
+.tips-card li {
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tips-card li:last-child {
+  border-bottom: none;
+}
+
+.tips-card i {
+  color: #4c6ef5;
+  font-size: 1.2rem;
+}
+
+/* Add these to your existing CSS or in a style tag in your HTML */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');

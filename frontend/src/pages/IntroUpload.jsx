@@ -1,64 +1,43 @@
 import React, { useState, useRef } from "react";
-import './IntroUpload.css';
+import axios from "axios";
+import "./IntroUpload.css";
 
 function Upload() {
   const [file, setFile] = useState(null);
   const [text, setText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [dragActive, setDragActive] = useState(false);
+  const [success, setSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      validateAndSetFile(selectedFile);
+      // Check file type (allow PDF, text files, and Word documents)
+      const validTypes = [
+        'application/pdf',
+        'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      
+      if (!validTypes.includes(selectedFile.type)) {
+        setError("Please select a valid document (PDF, TXT, DOC, or DOCX)");
+        setFile(null);
+        return;
+      }
+      
+      // Check file size (max 10MB)
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setError("File size must be less than 10MB");
+        setFile(null);
+        return;
+      }
+      
+      setFile(selectedFile);
+      setError("");
+      setSuccess(false);
     }
-  };
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      validateAndSetFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const validateAndSetFile = (selectedFile) => {
-    const validTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'text/plain'
-    ];
-    
-    const maxSize = 10 * 1024 * 1024; // 10MB
-
-    if (!validTypes.includes(selectedFile.type)) {
-      setError("Please upload a PDF, DOC, DOCX, or TXT file.");
-      return;
-    }
-
-    if (selectedFile.size > maxSize) {
-      setError("File size must be less than 10MB.");
-      return;
-    }
-
-    setFile(selectedFile);
-    setError("");
-    setText("");
   };
 
   const handleUpload = async () => {
@@ -67,28 +46,40 @@ function Upload() {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     setError("");
+    setSuccess(false);
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:5000/upload", {
-        method: "POST",
-        body: formData,
+      const res = await axios.post("http://127.0.0.1:5000/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setText(data.text || "No text extracted.");
-    } catch (error) {
-      setError("Error: " + error.message);
+      setText(res.data.text);
+      setSuccess(true);
+    } catch (err) {
+      console.error(err);
+      setError("Error uploading file. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      const event = { target: { files: [droppedFile] } };
+      handleFileChange(event);
     }
   };
 
@@ -96,156 +87,104 @@ function Upload() {
     setFile(null);
     setText("");
     setError("");
+    setSuccess(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const getFileIcon = (type) => {
-    if (type.includes('pdf')) return 'fas fa-file-pdf';
-    if (type.includes('word')) return 'fas fa-file-word';
-    if (type.includes('text')) return 'fas fa-file-alt';
-    return 'fas fa-file';
+  const getFileIcon = (fileName) => {
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch(extension) {
+      case 'pdf':
+        return '📄';
+      case 'doc':
+      case 'docx':
+        return '📝';
+      case 'txt':
+        return '📃';
+      default:
+        return '📎';
+    }
   };
 
   return (
     <div className="upload-container">
-      <div className="upload-header">
-        <h2>Document Upload</h2>
-        <p>Upload legal documents for text extraction and analysis</p>
-      </div>
-
-      <div className="upload-content">
-        {/* Upload Area */}
-        <div className="upload-section">
-          <div 
-            className={`upload-area ${dragActive ? 'drag-active' : ''} ${file ? 'has-file' : ''}`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileChange}
-              accept=".pdf,.doc,.docx,.txt"
-              className="file-input"
-            />
-            
-            <div className="upload-placeholder">
-              <i className="fas fa-cloud-upload-alt"></i>
-              <h3>Drop your file here or click to browse</h3>
-              <p>Supports PDF, DOC, DOCX, TXT files (max 10MB)</p>
-            </div>
-          </div>
-
-          {error && <div className="error-message">{error}</div>}
-
-          {/* File Preview */}
+      <div className="upload-card">
+        <h2>Upload Document</h2>
+        <p className="upload-subtitle">Extract text from your documents</p>
+        
+        <div 
+          className={`drop-zone ${file ? 'has-file' : ''}`}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+          <input
+            type="file"
+            id="file-input"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".pdf,.txt,.doc,.docx"
+            className="file-input"
+          />
+          <label htmlFor="file-input" className="file-label">
+            <div className="upload-icon">📤</div>
+            <p className="drop-text">
+              {file ? file.name : "Drag & drop your file here or click to browse"}
+            </p>
+            <p className="file-types">Supported formats: PDF, TXT, DOC, DOCX</p>
+          </label>
+          
           {file && (
             <div className="file-preview">
-              <div className="file-info">
-                <i className={getFileIcon(file.type)}></i>
-                <div className="file-details">
-                  <h4>{file.name}</h4>
-                  <p>{formatFileSize(file.size)}</p>
-                </div>
-                <button onClick={handleRemoveFile} className="remove-btn">
-                  <i className="fas fa-times"></i>
-                </button>
-              </div>
-              
+              <span className="file-icon">{getFileIcon(file.name)}</span>
+              <span className="file-name">{file.name}</span>
               <button 
-                onClick={handleUpload} 
-                disabled={loading}
-                className="upload-btn"
+                className="remove-file-btn"
+                onClick={handleRemoveFile}
+                aria-label="Remove file"
               >
-                {loading ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin"></i>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-upload"></i>
-                    Extract Text
-                  </>
-                )}
+                ×
               </button>
             </div>
           )}
         </div>
-
-        {/* Extracted Text */}
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        <button 
+          onClick={handleUpload} 
+          disabled={!file || isLoading}
+          className={`upload-btn ${isLoading ? 'loading' : ''}`}
+        >
+          {isLoading ? (
+            <>
+              <span className="spinner"></span>
+              Processing...
+            </>
+          ) : (
+            'Extract Text'
+          )}
+        </button>
+        
+        {success && <div className="success-message">Text extracted successfully!</div>}
+        
         {text && (
-          <div className="result-section">
-            <div className="section-header">
-              <h3>Extracted Text</h3>
-              <div className="text-actions">
-                <span className="word-count">
-                  {text.trim().split(/\s+/).length} words
-                </span>
-                <button 
-                  onClick={() => navigator.clipboard.writeText(text)}
-                  className="copy-btn"
-                >
-                  <i className="fas fa-copy"></i>
-                  Copy Text
-                </button>
-              </div>
+          <div className="result-container">
+            <h3>Extracted Text:</h3>
+            <div className="text-result">
+              <pre>{text}</pre>
             </div>
-            
-            <div className="extracted-text">
-              <div className="text-content">
-                <p>{text}</p>
-              </div>
-            </div>
-
-            <div className="action-buttons">
-              <button className="btn-secondary">
-                <i className="fas fa-summarize"></i>
-                Summarize
-              </button>
-              <button className="btn-secondary">
-                <i className="fas fa-question"></i>
-                Ask Questions
-              </button>
-              <button className="btn-secondary">
-                <i className="fas fa-explain"></i>
-                Explain Clauses
-              </button>
-            </div>
+            <button 
+              className="copy-btn"
+              onClick={() => {
+                navigator.clipboard.writeText(text);
+              }}
+            >
+              Copy Text
+            </button>
           </div>
         )}
-      </div>
-
-      {/* Supported Formats */}
-      <div className="supported-formats">
-        <h4>Supported Formats</h4>
-        <div className="format-list">
-          <div className="format-item">
-            <i className="fas fa-file-pdf"></i>
-            <span>PDF Documents</span>
-          </div>
-          <div className="format-item">
-            <i className="fas fa-file-word"></i>
-            <span>Word Documents</span>
-          </div>
-          <div className="format-item">
-            <i className="fas fa-file-alt"></i>
-            <span>Text Files</span>
-          </div>
-        </div>
       </div>
     </div>
   );
