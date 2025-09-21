@@ -1,9 +1,9 @@
 import React from 'react';
-import { useNavigate } from "react-router-dom";   // ✅ Import navigation
+import { useNavigate } from "react-router-dom";
 import './Home.css';
 
 const Home = () => {
-  const navigate = useNavigate();  // ✅ Hook for navigation
+  const navigate = useNavigate();
 
   return (
     <div className="legal-doc-app">
@@ -14,30 +14,38 @@ const Home = () => {
             <i className="fas fa-scale-balanced"></i>
             <span>LegalDocSimplifier</span>
           </div>
-          <nav>
-            <ul>
-              <li><a href="#" className="active">Home</a></li>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">How It Works</a></li>
-              <li><a href="#">Pricing</a></li>
-              <li><a href="#">Contact</a></li>
-            </ul>
-          </nav>
-          <div className="auth-buttons">
-            <button className="btn btn-outline">Log In</button>
-            <button className="btn btn-primary">Sign Up</button>
-          </div>
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <h1>Simplify Complex Legal Documents in Minutes</h1>
-          <p>LegalDocSimplifier uses AI to help you understand contracts, summarize terms, and explain legal jargon in plain English.</p>
-          <div className="hero-buttons">
-            <button className="btn btn-primary btn-large" onClick={() => navigate("/upload")}>Get Started Free</button>
-            <button className="btn btn-outline-light btn-large">Watch Demo</button>
+          <div className="hero-text">
+            <h1>Simplify Complex Legal Documents in Minutes</h1>
+            <p>LegalDocSimplifier uses AI to help you understand contracts, summarize terms, and explain legal jargon in plain English.</p>
+            <div className="hero-buttons">
+              <button className="btn btn-primary btn-large" onClick={() => navigate("/upload")}>
+                Get Started Free
+                <i className="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          <div className="hero-image">
+            <div className="floating-card card-1">
+              <i className="fas fa-file-contract"></i>
+              <p>Contract Simplified</p>
+            </div>
+            <div className="floating-card card-2">
+              <i className="fas fa-check-circle"></i>
+              <p>Key Points Highlighted</p>
+            </div>
+            <div className="floating-card card-3">
+              <i className="fas fa-clock"></i>
+              <p>Save Time</p>
+            </div>
+            <div className="main-hero-image">
+              <i className="fas fa-scale-balanced"></i>
+            </div>
           </div>
         </div>
       </section>
@@ -50,43 +58,83 @@ const Home = () => {
             <div className="features-grid">
               
               {/* Upload */}
-              <div className="feature-card">
+              <div className="feature-card" onClick={() => navigate("/upload")}>
                 <div className="feature-icon">
                   <i className="fas fa-file-upload"></i>
                 </div>
                 <h3>Upload Documents</h3>
                 <p>Upload your legal documents securely for analysis and simplification.</p>
-                <button className="btn btn-outline" onClick={() => navigate("/upload")}>Upload Now</button>
+                <div className="feature-action">
+                  <span>Upload Now</span>
+                  <i className="fas fa-arrow-right"></i>
+                </div>
               </div>
               
               {/* Summarize */}
-              <div className="feature-card">
+              <div className="feature-card" onClick={() => navigate("/summarize")}>
                 <div className="feature-icon">
                   <i className="fas fa-file-contract"></i>
                 </div>
                 <h3>Summarize Contracts</h3>
                 <p>Get concise summaries of lengthy contracts with key points highlighted.</p>
-                <button className="btn btn-outline" onClick={() => navigate("/summarize")}>Summarize</button>
+                <div className="feature-action">
+                  <span>Summarize</span>
+                  <i className="fas fa-arrow-right"></i>
+                </div>
               </div>
               
               {/* Clause Explanation */}
-              <div className="feature-card">
+              <div className="feature-card" onClick={() => navigate("/clause")}>
                 <div className="feature-icon">
                   <i className="fas fa-paragraph"></i>
                 </div>
                 <h3>Explain Clauses</h3>
                 <p>Understand complex legal clauses explained in simple, plain language.</p>
-                <button className="btn btn-outline" onClick={() => navigate("/clause")}>Explain</button>
+                <div className="feature-action">
+                  <span>Explain</span>
+                  <i className="fas fa-arrow-right"></i>
+                </div>
               </div>
               
               {/* Q&A */}
-              <div className="feature-card">
+              <div className="feature-card" onClick={() => navigate("/qa")}>
                 <div className="feature-icon">
                   <i className="fas fa-question-circle"></i>
                 </div>
                 <h3>Ask Q&A</h3>
                 <p>Get answers to your specific questions about any legal document.</p>
-                <button className="btn btn-outline" onClick={() => navigate("/qa")}>Ask Question</button>
+                <div className="feature-action">
+                  <span>Ask Question</span>
+                  <i className="fas fa-arrow-right"></i>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Benefits Section */}
+          <section className="benefits-section">
+            <h2>Why Choose LegalDocSimplifier?</h2>
+            <div className="benefits-grid">
+              <div className="benefit-item">
+                <div className="benefit-icon">
+                  <i className="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure & Private</h3>
+                <p>Your documents are encrypted and never stored longer than necessary.</p>
+              </div>
+              <div className="benefit-item">
+                <div className="benefit-icon">
+                  <i className="fas fa-bolt"></i>
+                </div>
+                <h3>Instant Results</h3>
+                <p>Get explanations and summaries in seconds, not hours.</p>
+              </div>
+              <div className="benefit-item">
+                <div className="benefit-icon">
+                  <i className="fas fa-graduation-cap"></i>
+                </div>
+                <h3>AI-Powered</h3>
+                <p>Advanced algorithms trained on thousands of legal documents.</p>
               </div>
             </div>
           </section>
@@ -106,10 +154,10 @@ const Home = () => {
           <div className="footer-section">
             <h4>Features</h4>
             <ul>
-              <li><a href="#">Document Upload</a></li>
-              <li><a href="#">Contract Summarization</a></li>
-              <li><a href="#">Clause Explanation</a></li>
-              <li><a href="#">Q&A</a></li>
+              <li><button className="footer-link" onClick={() => navigate("/upload")}>Document Upload</button></li>
+              <li><button className="footer-link" onClick={() => navigate("/summarize")}>Contract Summarization</button></li>
+              <li><button className="footer-link" onClick={() => navigate("/clause")}>Clause Explanation</button></li>
+              <li><button className="footer-link" onClick={() => navigate("/qa")}>Q&A</button></li>
             </ul>
           </div>
         </div>
